@@ -102,6 +102,6 @@ int main() {
 
     printf("escolha uma opção: ");
     
-    // fim do sistema
+    // fim
     return 0;
 }
