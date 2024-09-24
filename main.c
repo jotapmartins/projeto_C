@@ -82,7 +82,7 @@ int main() {
     scanf("%d", &opcao);
 
     if (opcao == 1) {
-        cadastrarUsuario();  // Função de cadastro
+        cadastrarUsuario();  // so pra saber
     } else if (opcao == 2) {
         printf("Insira o CPF: ");
         scanf("%11s", cpf);
