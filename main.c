@@ -4,10 +4,11 @@
 
 #define FILENAME "USUARIO.txt"
 
-// Função para cadastrar o usuário (CPF e senha)
+// Função para cadastrar o usuário (CPF, senha e saldo inicial)
 void cadastrarUsuario() {
     char cpf[12];
     char senha[20];
+    float saldoReais = 0.0; // Saldo inicial em reais
 
     printf("Digite o CPF para cadastro (somente números): ");
     scanf("%11s", cpf);
@@ -21,15 +22,15 @@ void cadastrarUsuario() {
         return;
     }
 
-    // Escrevendo o CPF e a senha no arquivo
-    fprintf(file, "CPF:%s Senha:%s\n", cpf, senha);
+    // Escrevendo o CPF, a senha e o saldo no arquivo
+    fprintf(file, "CPF:%s Senha:%s Saldo:%.2f\n", cpf, senha, saldoReais);
 
     fclose(file);
     printf("Cadastro realizado com sucesso!\n");
 }
 
 // Função para verificar o login
-int efetuarLogin(char *cpf, char *senha) {
+int efetuarLogin(char *cpf, char *senha, float *saldo) {
     char cpfCadastrado[12];
     char senhaCadastrada[20];
     char linha[50];
@@ -41,10 +42,14 @@ int efetuarLogin(char *cpf, char *senha) {
         return 0;
     }
 
-    // Lendo o CPF e a senha do arquivo linha por linha
+    // Lendo o CPF, senha e saldo do arquivo linha por linha
     while (fgets(linha, sizeof(linha), file)) {
-        // Verifica se a linha contém um CPF e uma senha
-        if (sscanf(linha, "CPF:%11s Senha:%19s", cpfCadastrado, senhaCadastrada) == 2) {
+        // Verifica se a linha contém um CPF, uma senha e o saldo
+        if (sscanf(linha, "CPF:%11s Senha:%19s Saldo:%f", cpfCadastrado, senhaCadastrada, saldo) == 3) {
+            // Remover espaços em branco do final do CPF e da senha
+            cpfCadastrado[strcspn(cpfCadastrado, "\n")] = '\0'; // Remove newline, se houver
+            senhaCadastrada[strcspn(senhaCadastrada, "\n")] = '\0'; // Remove newline, se houver
+
             // Comparando o CPF e a senha inseridos com os dados cadastrados
             if (strcmp(cpf, cpfCadastrado) == 0 && strcmp(senha, senhaCadastrada) == 0) {
                 fclose(file);
@@ -58,8 +63,9 @@ int efetuarLogin(char *cpf, char *senha) {
 }
 
 // Função para exibir o menu principal
-void menuPrincipal() {
+void menuPrincipal(float saldoReais) {
     printf("Opções Disponíveis:\n");
+    printf("\n");
     printf("1. Consultar saldo\n");
     printf("2. Consultar extrato\n");
     printf("3. Depositar\n");
@@ -70,29 +76,144 @@ void menuPrincipal() {
     printf("8. Sair\n");
 }
 
+// Função para executar a escolha do usuário
+void escolhaOpcao(int opcao, float *saldoReais, const char *cpf, const char *senha) {
+    switch (opcao) {
+        case 1:
+            printf("Saldo atual: %.2f\n", *saldoReais);
+          printf("\n");
+            break;
+        case 2:
+            printf("Consultar extrato selecionado.\n");
+          printf("\n");
+            // Lógica para consultar extrato
+            break;
+        case 3: { // Depositar
+            float deposito;
+            printf("Digite o valor a depositar: ");
+            scanf("%f", &deposito);
+            if (deposito > 0) {
+                *saldoReais += deposito; // Adiciona o depósito ao saldo
+              printf("\n");
+                printf("Depósito de R$ %.2f realizado com sucesso! Saldo atual: R$ %.2f\n", deposito, *saldoReais);
+
+                // Atualiza o saldo no arquivo
+                FILE *file = fopen(FILENAME, "r+");
+                if (file != NULL) {
+                    char linha[50];
+                    long pos;
+                    while (fgets(linha, sizeof(linha), file)) {
+                        // Encontra a linha correspondente ao usuário
+                        if (strstr(linha, cpf) != NULL) {
+                            // Armazena a posição atual do arquivo
+                            pos = ftell(file);
+                            // Retorna ao início da linha para sobrescrever
+                            fseek(file, pos - strlen(linha), SEEK_SET);
+                            fprintf(file, "CPF:%s Senha:%s Saldo:%.2f\n", cpf, senha, *saldoReais);
+                            break;
+                        }
+                    }
+                    fclose(file);
+                }
+            } else {
+                printf("Valor de depósito inválido. Tente novamente.\n");
+            }
+            break;
+        }
+        case 4: { // Sacar
+            float saque;
+            printf("Digite o valor a sacar: ");
+            scanf("%f", &saque);
+            if (saque > 0 && saque <= *saldoReais) {
+                *saldoReais -= saque; // Subtrai o saque do saldo
+              printf("\n");
+                printf("Saque de R$ %.2f realizado com sucesso! Saldo atual: R$ %.2f\n", saque, *saldoReais);
+
+                // Atualiza o saldo no arquivo
+                FILE *file = fopen(FILENAME, "r+");
+                if (file != NULL) {
+                    char linha[50];
+                    long pos;
+                    while (fgets(linha, sizeof(linha), file)) {
+                        // Encontra a linha correspondente ao usuário
+                        if (strstr(linha, cpf) != NULL) {
+                            // Armazena a posição atual do arquivo
+                            pos = ftell(file);
+                            // Retorna ao início da linha para sobrescrever
+                            fseek(file, pos - strlen(linha), SEEK_SET);
+                            fprintf(file, "CPF:%s Senha:%s Saldo:%.2f\n", cpf, senha, *saldoReais);
+                            break;
+                        }
+                    }
+                    fclose(file);
+                }
+            } else if (saque > *saldoReais) {
+                printf("Saldo insuficiente para o saque de R$ %.2f. Saldo atual: R$ %.2f\n", saque, *saldoReais);
+            } else {
+                printf("Valor de saque inválido. Tente novamente.\n");
+            }
+            break;
+        }
+        case 5:
+          printf("\n");
+            printf("Comprar Criptomoedas selecionado.\n");
+            // Lógica para comprar criptomoedas
+            break;
+        case 6:
+          printf("\n");
+            printf("Vender Criptomoedas selecionado.\n");
+            // Lógica para vender criptomoedas
+            break;
+        case 7:
+          printf("\n");
+            printf("Atualizar cotação selecionado.\n");
+            // Lógica para atualizar cotação
+            break;
+        case 8:
+            printf("Encerrando programa!\n");
+            break;
+        default:
+            printf("Opção inválida! Tente novamente.\n");
+            break;
+    }
+}
+
 int main() {
     int opcao;
     char cpf[12];
     char senha[20];
+    float saldoReais = 0.0; // Inicializa saldo
 
     printf("Bem-vindo à FEI Crypto Exchange!\n");
+    printf("\n");
     printf("1. Cadastrar novo usuário\n");
     printf("2. Efetuar login\n");
+    printf("\n");
     printf("Escolha uma opção: ");
     scanf("%d", &opcao);
 
     if (opcao == 1) {
-        cadastrarUsuario();  // so pra saber
+        cadastrarUsuario();
     } else if (opcao == 2) {
+        printf("\n");
         printf("Insira o CPF: ");
         scanf("%11s", cpf);
 
         printf("Insira a senha: ");
         scanf("%19s", senha);
 
-        if (efetuarLogin(cpf, senha)) {
+        // Passa o endereço de saldo para efetuarLogin
+        if (efetuarLogin(cpf, senha, &saldoReais)) {
+            printf("\n");
             printf("Login realizado com sucesso! Bem-vindo à FEI Crypto Exchange!\n");
-            menuPrincipal();
+            printf("\n");
+            do {
+                menuPrincipal(saldoReais);
+                printf("Escolha uma opção: ");
+                scanf("%d", &opcao);
+                escolhaOpcao(opcao, &saldoReais, cpf, senha); // Chama a função para executar a opção escolhida
+
+            } while (opcao != 8); // O loop continua até que a opção 8 (sair) seja escolhida
         } else {
             printf("CPF ou senha incorretos. Tente novamente.\n");
         }
@@ -100,8 +221,5 @@ int main() {
         printf("Opção inválida. Encerrando o programa.\n");
     }
 
-    printf("escolha uma opção: ");
-    
-    // fim
     return 0;
 }
