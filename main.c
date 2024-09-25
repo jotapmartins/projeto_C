@@ -95,7 +95,7 @@ void escolhaOpcao(int opcao, float *saldoReais, const char *cpf, const char *sen
             if (deposito > 0) {
                 *saldoReais += deposito; // Adiciona o depósito ao saldo
               printf("\n");
-                printf("Depósito de R$ %.2f realizado com sucesso! Saldo atual: R$ %.2f\n", deposito, *saldoReais);
+                printf("Depósito realizado com sucesso! Saldo atual: R$ %.2f\n", deposito, *saldoReais);
 
                 // Atualiza o saldo no arquivo
                 FILE *file = fopen(FILENAME, "r+");
@@ -127,7 +127,7 @@ void escolhaOpcao(int opcao, float *saldoReais, const char *cpf, const char *sen
             if (saque > 0 && saque <= *saldoReais) {
                 *saldoReais -= saque; // Subtrai o saque do saldo
               printf("\n");
-                printf("Saque de R$ %.2f realizado com sucesso! Saldo atual: R$ %.2f\n", saque, *saldoReais);
+                printf("Saque realizado com sucesso! Saldo atual: R$ %.2f\n", saque, *saldoReais);
 
                 // Atualiza o saldo no arquivo
                 FILE *file = fopen(FILENAME, "r+");
@@ -156,7 +156,10 @@ void escolhaOpcao(int opcao, float *saldoReais, const char *cpf, const char *sen
         }
         case 5:
           printf("\n");
-            printf("Comprar Criptomoedas selecionado.\n");
+            printf("Digite o número referente a criptomoeda você deseja comprar.\n");
+            printf("\n");
+            printf("BITCOIN - 1     ETHEREUM - 2     RIPPLE - 3\n");
+            printf("\n");
             // Lógica para comprar criptomoedas
             break;
         case 6:
