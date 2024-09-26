@@ -48,7 +48,7 @@ void Menu() {
         
                 break;
             case 2:
-                // Lógica para consultar extrato
+                // Lógica para consultar extrat
                 break;
             case 3:
                 // Lógica para depositar
