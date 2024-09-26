@@ -238,7 +238,7 @@ void escolhaOpcao(int opcao, float *saldoReais, CriptoSaldo *criptoSaldo, const 
     printf("Digite o número referente a criptomoeda você deseja comprar.\n");
     printf("1. BITCOIN - R$%.2f\n", bitcoin_preco);
     printf("2. RIPPLE - R$%.2f\n", ripple_preco);
-    printf("2. ETHEREUM - R$%.2f\n", ethereum_preco);
+    printf("3. ETHEREUM - R$%.2f\n", ethereum_preco);
     scanf("%d", &escolhacripto);
     printf("Digite o valor em reais que deseja gastar: ");
     scanf("%f", &valorcompra);
@@ -273,14 +273,64 @@ void escolhaOpcao(int opcao, float *saldoReais, CriptoSaldo *criptoSaldo, const 
     // Lógica para comprar criptomoedas
 
   }
-  case 6:
+  case 6: {
+    int escolhacripto;
+    float quantidadevenda;
     printf("\n");
-    printf("Vender Criptomoedas selecionado.\n");
-    // Lógica para vender criptomoedas
+    printf("Qual Criptomoeda deseja vender?\n");
+    printf("1. BITCOIN - R$%2f\n", bitcoin_preco);
+    printf("2. RIPPLE - R$%2f\n", ripple_preco);
+    printf("3. ETHEREUM - R$%2f\n", ethereum_preco);
+    scanf("%d", &escolhacripto);
+    printf("Digite a quantidade que deseja vender: ");
+    scanf("%f", &quantidadevenda);
+
+    float valorvenda = 0.0;
+
+    switch (escolhacripto) {
+    case 1: //venda bitcoin
+      if (quantidadevenda <= criptoSaldo->bitcoin) {
+        valorvenda = quantidadevenda * bitcoin_preco;
+        valorvenda = aplicartaxavenda(valorvenda, escolhacripto); //aplica taxa
+        criptoSaldo->bitcoin -= quantidadevenda;
+        *saldoReais += valorvenda;
+        printf("Venda de Bitcoin realizada com sucesso! Valor recebido: R$ %.2f. Saldo atual: R$ %.2f\n", valorvenda, *saldoReais);
+      } else {
+        printf("Quantidade de Bitcoin insuficiente.\n");
+      }
+      break;
+    case 2: //venda ripple
+      if (quantidadevenda <= criptoSaldo->ripple) {
+        valorvenda = quantidadevenda * ripple_preco;
+        valorvenda = aplicartaxavenda(valorvenda, escolhacripto); //aplica taxa
+        criptoSaldo->ripple -= quantidadevenda;
+        *saldoReais += valorvenda;
+        printf("Venda de Ripple realizada com sucesso! Valor recebido: R$ %.2f. Saldo atual: R$ %.2f\n", valorvenda, *saldoReais);
+      } else {
+        printf("Quantidade de Ripple insuficiente.\n");
+      }
+      break;
+      case 3: //venda ethereum
+        if (quantidadevenda <= criptoSaldo->ethereum) {
+          valorvenda = quantidadevenda * ethereum_preco;
+          valorvenda = aplicartaxavenda(valorvenda, escolhacripto); //aplica taxa
+          criptoSaldo->ethereum -= quantidadevenda;
+          *saldoReais += valorvenda;
+          printf("Venda de Ethereum realizada com sucesso! Valor recebido: R$ %.2f. Saldo atual: R$ %.2f\n", valorvenda, *saldoReais);
+        } else {
+          printf("Quantidade de Ethereum insuficiente.\n");
+        }
+        break;
+      default:
+        printf("Opção inválida.\n");
+        break;
+      }
     break;
+  }
+// Lógica para vender criptomoedas
+
   case 7:
-    printf("\n");
-    printf("Atualizar cotação selecionado.\n");
+    atualizarcotacao();
     // Lógica para atualizar cotação
     break;
   case 8:
