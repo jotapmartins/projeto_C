@@ -100,8 +100,32 @@ float aplicartaxavenda(float valorvenda, int cripto) {
   return valorvenda - taxa;
 }
 
+#define MAX_USUARIOS 10
+
+int contarUsuarios() {
+  FILE *file = fopen(FILENAME, "r");
+  if (file == NULL) {
+      return 0;
+  }
+
+  int contador = 0;
+  char linha[50];
+  while (fgets(linha, sizeof(linha), file)) {
+      contador++;
+  }
+  fclose(file);
+  return contador;
+}
+
 //cadastro
 void cadastrarUsuario() {
+  int totalUsuarios = contarUsuarios();
+
+  if (totalUsuarios >= MAX_USUARIOS) {
+    printf("Limite máximo de usuários atingido.\n");
+    return;
+  }
+
   char cpf[12];
   char senha[20];
   float saldoReais = 0.0;
@@ -111,7 +135,7 @@ void cadastrarUsuario() {
   printf("Digite a senha para cadastro: ");
   scanf("%19s", senha);
 
-  
+
   FILE *file = fopen(FILENAME, "a");
   if (file == NULL) {
     printf("Erro ao abrir o arquivo de cadastro.\n");
