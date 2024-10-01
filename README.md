@@ -1,15 +1,5 @@
-<!DOCTYPE html>
-<html>
+<link href="style.css" rel="stylesheet" type="text/css" />
 
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width">
-  <title>replit</title>
-  <link href="style.css" rel="stylesheet" type="text/css" />
-</head>
-
-
-<body>
   <div id="centro">
     <div>
       <h1 id="titulo">Projeto C</h1>
@@ -29,20 +19,20 @@
     <h3>Como funciona o projeto</h3>
     <p id="uso">1º Passo</p>
     <img src="WhatsApp Image 2024-10-01 at 17.57.24.jpeg" width="245" height="120"
+    <br>
     <p>Crie uma conta para efetuar o login</p>
     <p id="uso"> 2º Passo</p>
     <img src="WhatsApp Image 2024-10-01 at 17.57.44.jpeg" width="245" height="120"
+    <br>
     <p>Selecione a opção para usar o cripto exchange</p>
     <h3 id="moedas">Moedas</h3>
     <div id="nomes">
-    <img src="download-removebg-preview.png" width="105" height="70">
+      <img src="download-removebg-preview.png" width="105" height="70">
+      <p>(Bitcoin)</p>
       <img src="images-removebg-preview.png" width="110" height="90">
+      <p>(Ripple)</p>
       <img src="Ethereum.png" width="100" height="80">
+      <p>(Ethereum)</p>
     </div>
-    <span id="palavras"> (Bitcoin) (Ripple) (Ethereum)</span>
-    <br>
 
   </div>
-</body>
-
-</html>
