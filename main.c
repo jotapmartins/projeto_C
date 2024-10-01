@@ -100,5 +100,6 @@ int main() {
         printf("Opção inválida. Encerrando o programa.\n");
     }
 
+    //teste
     return 0;
 }
