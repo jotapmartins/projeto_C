@@ -5,7 +5,6 @@
 
 #define FILENAME "USUARIO.txt"
 
-//valor moedas
 float bitcoin_preco = 150000.0;
 float ripple_preco = 5.0;
 float ethereum_preco = 10000.0;
