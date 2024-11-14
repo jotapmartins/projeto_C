@@ -227,3 +227,45 @@ void excluirinvestidor() {
         printf("Investidor não encontrado.\n");
     }
 }
+
+void excluirmoeda() {
+    char nome[20];
+    char nomeremove[20];
+    float valor;
+    int encontrado = 0;
+
+    printf("Excluir Criptomoeda: \n");
+    printf("Digite o nome da Criptomoeda que deseja excluir: ");
+    scanf("%s", nomeremove);
+
+    FILE *file = fopen(criptofile, "r");
+    FILE *temp = fopen("temp.txt", "w");
+
+    if (file == NULL || temp == NULL) {
+        printf("Erro ao abrir o arquivo.\n");
+        return;
+    }
+
+    while (fscanf(file, "%s %f", nome, &valor) != EOF) {
+        if(strcmp(nome, nomeremove) != 0) {
+            fprintf(temp, "%s %.2f\n", nome, valor);
+        } else {
+            encontrado = 1;
+        }
+    }
+    fclose(file);
+    fclose(temp);
+
+    remove(criptofile);
+    rename("temp.txt", criptofile);
+
+    if(encontrado) {
+        printf("Criptomoeda removida com sucesso!\n");
+    } else {
+        printf("Criptomoeda não encontrada.\n");
+    }
+}
+
+void sair() {
+    printf("Encerrando programa.\n");
+}
