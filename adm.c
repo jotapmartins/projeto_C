@@ -147,3 +147,83 @@ void menuadm() {
         }
     } while (opcao != 5);
 }
+
+void cadastroinvestidor() {
+    char nome[maxcpf];
+    char cpf[15];
+
+    printf("Cadastro de novo Investidor: \n");
+    printf("Digite o nome do Investidor: ");
+    scanf("%s", nome);
+    printf("Digite o CPF do Investidor: ");
+    scanf("%s", cpf);
+
+    FILE *file = fopen(usuariofile, "a");
+    if (file == NULL) {
+        printf("Erro ao abrir o arquivo de investidores.\n");
+        return;
+    }
+    fprintf(file, "%s %s\n", nome, cpf);
+    fclose(file);
+
+    printf("Investidor cadastrado com sucesso!\n");
+}
+
+void cadastromoeda() {
+    char nome[20];
+    float valor;
+
+    printf("Cadastro de Nova Criptomoeda: \n");
+    printf("Digite o nome da Criptomoeda: ");
+    scanf("%s", nome);
+    printf("Digite o valor da Criptomoeda: ");
+    scanf("%f", &valor);
+
+    FILE *file = fopen(criptofile, "a");
+    if (file == NULL) {
+        printf("Erro ao abrir arquivo de Criptomoedas.\n");
+        return;
+    }
+    fprintf(file, "%s %.2f\n", nome, valor);
+    fclose(file);
+
+    printf("Criptomoeda cadastrada com sucesso!\n");
+}
+
+void excluirinvestidor() {
+    char nome[maxcpf];
+    char cpf[15];
+    char nomeremover[maxcpf];
+    int encontrado = 0;
+
+    printf("Excluir Investidor: \n");
+    printf("Digite o nome do investidor que deseja excluir: ");
+    scanf("%s", nomeremover);
+
+    FILE *file = fopen(usuariofile, "r");
+    FILE *temp = fopen("temp.txt", "w");
+
+    if (file == NULL || temp == NULL) {
+        printf("Erro ao abrir arquivo.\n");
+        return;
+    }
+
+    while (fscanf(file, "%s %s", nome, cpf) != EOF) {
+        if (strcmp(nome, nomeremover) != 0) {
+            fprintf(temp, "%s %s\n", nome, cpf);
+        } else {
+            encontrado = 1;
+        }
+    }
+    fclose(file);
+    fclose(temp);
+
+    remove(usuariofile);
+    rename("temp.txt", usuariofile);
+
+    if (encontrado) {
+        printf("Investidor removido com sucesso!\n");
+    } else {
+        printf("Investidor não encontrado.\n");
+    }
+}
