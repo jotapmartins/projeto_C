@@ -421,7 +421,7 @@ void escolhaOpcao(int opcao, float *saldoReais, CriptoSaldo *criptoSaldo, const 
 }
 
 int main() {
-  int opcao;
+  int opcao, tipoacesso;
   char cpf[12];
   char senha[20];
   float saldoReais = 0.0;//saldo zero
@@ -449,15 +449,28 @@ int main() {
       printf("\n");
       printf("Login realizado com sucesso! Bem-vindo à FEI Crypto Exchange!\n");
       printf("------------------------------------------------------------------\n");
-      do {
+
+      printf("Escolha o tipo de acesso: \n");
+      printf("1. Administrador\n");
+      printf("2. Usuário\n");
+      scanf("%d", &tipoacesso);
+
+      if (tipoacesso == 1) {
+      
+        do {
         menuPrincipal(saldoReais);
         printf("Escolha uma opção: ");
         scanf("%d", &opcao);
         escolhaOpcao(opcao, &saldoReais, &criptoSaldo, cpf, senha);
 
-      } while (opcao !=
+        } while (opcao !=
                8);
-    } else {
+      } else if (tipoacesso == 2) {
+      printf("Acesso de Administrador permitido.\n");
+      } else {
+      printf("Opção inválida. Encerrando o programa.\n");
+      }
+    } else { 
       printf("CPF ou senha incorretos. Tente novamente.\n");
     }
   } else {
