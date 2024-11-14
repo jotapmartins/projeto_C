@@ -37,7 +37,7 @@ int main() {
           break;
       case 2:
           if (loginadm()) {
-             exibirmenu();  
+             menuadm();  
           } else {
               printf("Falha no login. Tente novamente.\n");
           }
@@ -111,4 +111,39 @@ int loginadm() {
         printf("CPF ou senha incorretos.\n");
         return 0;
     }
+}
+
+void menuadm() {
+    int opcao;
+
+    do{
+        printf("\n Menu \n");
+        printf("1. Cadastrar novo Investidor\n");
+        printf("2. Cadastrar nova Criptomoeda\n");
+        printf("3. Excluir Investidor\n");
+        printf("4. Excluir Criptomoeda\n");
+        printf("5. Sair\n");
+        printf("Escolha uma opção: ");
+        scanf("%d", &opcao);
+
+        switch (opcao) {
+            case 1:
+                cadastroinvestidor();
+                break;
+            case 2:
+                cadastromoeda();
+                break;
+            case 3:
+                excluirinvestidor();
+                break;
+            case 4:
+                excluirmoeda();
+                break;
+            case 5:
+                sair();
+                break;
+            default:
+                printf("Opção inválida. Tente novamente.\n");
+        }
+    } while (opcao != 5);
 }
