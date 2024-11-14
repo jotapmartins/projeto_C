@@ -95,4 +95,20 @@ int loginadm() {
         return 0;
     }
 
+    fscanf(file, "%s %s", savecpf, savesenha);
+    fclose(file);
+
+    printf("Login de Administrador: \n");
+    printf("Digite seu CPF: ");
+    scanf("%s", cpf);
+    printf("Digite sua senha: ");
+    scanf("%s", senha);
+
+    if (strcmp(cpf, savecpf) == 0 && strcmp(senha, savesenha) == 0) {
+        printf("Login bem-sucedido!\n");
+        return 1;
+    } else {
+        printf("CPF ou senha incorretos.\n");
+        return 0;
+    }
 }
