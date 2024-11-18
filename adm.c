@@ -269,3 +269,4 @@ void excluirmoeda() {
 void sair() {
     printf("Encerrando programa.\n");
 }
+// TERMINAR O ADM.C
