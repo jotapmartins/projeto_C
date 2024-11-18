@@ -25,7 +25,6 @@ void registrarTransacao(const char *tipo, const char *cripto, float quantidade, 
         return;
     }
 
-  // data
   time_t agora = time(NULL);
   struct tm *dataAtual = localtime(&agora);
   char data[11]; 
@@ -381,7 +380,7 @@ void escolhaOpcao(int opcao, float *saldoReais, CriptoSaldo *criptoSaldo, const 
         criptoSaldo->ripple -= quantidadevenda;
         *saldoReais += valorvenda;
         printf("Venda de RIPPLE realizada com sucesso! Valor recebido: R$ %.2f. Saldo atual: R$ %.2f\n", valorvenda, *saldoReais);
-        registrarTransacao("venda", "Ripple", quantidadevenda, valorvenda);//add extrato
+        registrarTransacao("venda", "Ripple", quantidadevenda, valorvenda);
             printf("------------------------------------------------------------------------------------------\n");
       } else {
         printf("Quantidade de RIPPLE insuficiente.\n");
