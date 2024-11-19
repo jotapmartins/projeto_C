@@ -22,6 +22,7 @@ int main() {
   int opcao;
 
   printf("Bem-vindo à área do administrador da FEI Crypto Exchange!\n");
+  printf("--------------------------------------------------------------");
 
   while (1) {
     printf("\n Menu Inicial \n");
@@ -29,6 +30,7 @@ int main() {
     printf("2. Login\n");
     printf("3. Sair\n");
     printf("Escolha uma opção: ");
+    printf("\n--------------------------------------------------------------\n");
     if (scanf("%d", &opcao) != 1) {
         printf("Erro na leitura da opção.\n");
         continue;  // Ignorar a opção inválida e continuar
@@ -131,6 +133,7 @@ void menuadm() {
     int opcao;
 
     do {
+        printf("--------------------------------------------");
         printf("\n Menu \n");
         printf("1. Cadastrar novo Investidor\n");
         printf("2. Cadastrar nova Criptomoeda\n");
@@ -138,8 +141,10 @@ void menuadm() {
         printf("4. Excluir Criptomoeda\n");
         printf("5. Consultar saldo de um investidor\n");
         printf("6. Consultar extrado de um investidor\n");
-        printf("7. Sair\n");
+        printf("7. Atualizar cotação de criptomoedas\n");
+        printf("8. Sair\n");
         printf("Escolha uma opção: ");
+        printf("\n");
         if (scanf("%d", &opcao) != 1) {
             printf("Erro na leitura da opção.\n");
             continue;  // Ignorar a opção inválida e continuar
@@ -162,15 +167,18 @@ void menuadm() {
                 consultarsaldo();
                 break;
             case 6:
-                printf("extrato do investidor");
+                consultarExtrato();
                 break;
             case 7:
+                atualizarcotacao();
+                break;
+            case 8:
                 sair();
                 break;
             default:
                 printf("Opção inválida. Tente novamente.\n");
         }
-    } while (opcao != 7);
+    } while (opcao != 8);
 }
 
 void cadastroinvestidor() {
@@ -381,6 +389,108 @@ void consultarsaldo() {
     }
 }
 
+void consultarExtrato() {
+    char cpf[maxcpf];
+    char linha[200]; // Buffer para ler as linhas do arquivo
+    int encontrado = 0;
+
+    printf("Digite o CPF do investidor para consultar o extrato: ");
+    if (scanf("%s", cpf) != 1) {
+        printf("Erro na leitura do CPF.\n");
+        return;
+    }
+
+    FILE *file = fopen("transacoes.txt", "r");
+    if (file == NULL) {
+        printf("Erro ao abrir o arquivo de transações.\n");
+        return;
+    }
+
+    printf("\nExtrato de Transações para o CPF: %s\n", cpf);
+
+    // Percorrer o arquivo linha por linha
+    while (fgets(linha, sizeof(linha), file)) {
+        char cpfAtual[maxcpf];
+        char tipo[20], moeda[20], data[11];
+        float quantidade, valor;
+
+        // Tenta extrair os dados da linha
+        if (sscanf(linha, "CPF:%11s / Tipo:%19s / Moeda:%19s / Quantidade:%f / Valor:%f / Data:%10s",
+                   cpfAtual, tipo, moeda, &quantidade, &valor, data) == 6) {
+            // Verifica se o CPF é o buscado
+            if (strcmp(cpf, cpfAtual) == 0) {
+                printf("Tipo: %s | Moeda: %s | Quantidade: %.2f | Valor: R$%.2f | Data: %s\n",
+                       tipo, moeda, quantidade, valor, data);
+                encontrado = 1;
+            }
+        }
+    }
+
+    fclose(file);
+
+    if (!encontrado) {
+        printf("Nenhuma transação encontrada para o CPF '%s'.\n", cpf);
+    }
+}
+
+void atualizarcotacao() {
+    char linha[100];             // Para armazenar a linha lida do arquivo
+    char nomecripto[20];         // Nome da moeda a ser atualizada
+    char nome[20];               // Nome da moeda atual no arquivo
+    float nova_cotacao;          // Nova cotação a ser atualizada
+    float cotacao, taxa_compra, taxa_venda;
+    int encontrado = 0;
+
+    printf("Atualizar Cotação de Criptomoeda: \n");
+    printf("Digite o nome da Criptomoeda: ");
+    if (scanf("%s", nomecripto) != 1) {
+        printf("Erro na leitura do nome da criptomoeda.\n");
+        return;
+    }
+
+    printf("Digite a nova cotação: ");
+    if (scanf("%f", &nova_cotacao) != 1) {
+        printf("Erro na leitura da nova cotação.\n");
+        return;
+    }
+
+    FILE *file = fopen(criptofile, "r");
+    FILE *temp = fopen("temp.txt", "w");
+
+    if (file == NULL || temp == NULL) {
+        printf("Erro ao abrir os arquivos.\n");
+        if (file) fclose(file);
+        if (temp) fclose(temp);
+        return;
+    }
+
+    // Percorre o arquivo linha por linha
+    while (fgets(linha, sizeof(linha), file)) {
+        // Tenta extrair os dados da linha
+        if (sscanf(linha, "%s %f %f %f", nome, &cotacao, &taxa_compra, &taxa_venda) == 4) {
+            // Verifica se o nome corresponde ao que deve ser atualizado
+            if (strcmp(nome, nomecripto) == 0) {
+                fprintf(temp, "%s %.2f %.2f %.2f\n", nome, nova_cotacao, taxa_compra, taxa_venda);
+                encontrado = 1;
+            } else {
+                fputs(linha, temp); // Copia a linha para o arquivo temporário
+            }
+        }
+    }
+
+    fclose(file);
+    fclose(temp);
+
+    // Substitui o arquivo original pelo temporário
+    remove(criptofile);
+    rename("temp.txt", criptofile);
+
+    if (encontrado) {
+        printf("Cotação da Criptomoeda '%s' atualizada com sucesso!\n", nomecripto);
+    } else {
+        printf("Criptomoeda '%s' não encontrada.\n", nomecripto);
+    }
+}
 
 
 void sair() {

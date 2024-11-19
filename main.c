@@ -3,8 +3,9 @@
 #include <string.h>
 #include <time.h>
 
-#define FILENAME "USUARIO.txt"
+#define usuariofile "USUARIO.txt"
 
+//valor moedas
 float bitcoin_preco = 150000.0;
 float ripple_preco = 5.0;
 float ethereum_preco = 10000.0;
@@ -102,7 +103,7 @@ float aplicartaxavenda(float valorvenda, int cripto) {
 #define MAX_USUARIOS 10
 
 int contarUsuarios() {
-  FILE *file = fopen(FILENAME, "r");
+  FILE *file = fopen(usuariofile, "r");
   if (file == NULL) {
       return 0;
   }
@@ -116,38 +117,6 @@ int contarUsuarios() {
   return contador;
 }
 
-//cadastro
-void cadastrarUsuario() {
-  int totalUsuarios = contarUsuarios();
-
-  if (totalUsuarios >= MAX_USUARIOS) {
-    printf("Limite máximo de usuários atingido.\n");
-    return;
-  }
-
-  char cpf[12];
-  char senha[20];
-  float saldoReais = 0.0;
-
-  printf("Digite o CPF para cadastro (somente números): ");
-  scanf("%11s", cpf);
-  printf("Digite a senha para cadastro: ");
-  scanf("%19s", senha);
-
-
-  FILE *file = fopen(FILENAME, "a");
-  if (file == NULL) {
-    printf("Erro ao abrir o arquivo de cadastro.\n");
-    return;
-  }
-
-  //salvando o cpf, senha e saldo
-  fprintf(file, "CPF:%s Senha:%s Saldo:%.2f\n", cpf, senha, saldoReais);
-
-  fclose(file);
-  printf("Cadastro realizado com sucesso!\n");
-}
-
 //verificar o login
 int efetuarLogin(char *cpf, char *senha, float *saldo) {
   char cpfCadastrado[12];
@@ -155,7 +124,7 @@ int efetuarLogin(char *cpf, char *senha, float *saldo) {
   char linha[50];
 
   //lendo
-  FILE *file = fopen(FILENAME, "r");
+  FILE *file = fopen(usuariofile, "r");
   if (file == NULL) {
     printf("Erro ao abrir o arquivo de login.\n");
     return 0;
@@ -237,7 +206,7 @@ void escolhaOpcao(int opcao, float *saldoReais, CriptoSaldo *criptoSaldo, const 
       // add no extrato
       registrarTransacao("deposito", "Reais", 0, deposito);
 
-      FILE *file = fopen(FILENAME, "r+");
+      FILE *file = fopen(usuariofile, "r+");
       if (file != NULL) {
         char linha[50];
         long pos;
@@ -272,7 +241,7 @@ void escolhaOpcao(int opcao, float *saldoReais, CriptoSaldo *criptoSaldo, const 
       registrarTransacao("saque", "Reais", 0, saque);//modificado
 
       // Atualiza o saldo
-      FILE *file = fopen(FILENAME, "r+");
+      FILE *file = fopen(usuariofile, "r+");
       if (file != NULL) {
         char linha[50];
         long pos;
@@ -421,61 +390,28 @@ void escolhaOpcao(int opcao, float *saldoReais, CriptoSaldo *criptoSaldo, const 
 }
 
 int main() {
-  int opcao, tipoacesso;
-  char cpf[12];
-  char senha[20];
-  float saldoReais = 0.0;//saldo zero
-  CriptoSaldo criptoSaldo = {0, 0, 0};
+    srand(time(NULL));
 
-  printf("Bem-vindo à FEI Crypto Exchange!\n");
-  printf("---------------------------------\n");
-  printf("1. Cadastrar novo usuário\n");
-  printf("2. Efetuar login\n");
-  printf("\n");
-  printf("Escolha uma opção: ");
-  scanf("%d", &opcao);
+    char cpf[12], senha[20];
+    printf("Digite seu CPF (apenas números): ");
+    scanf("%s", cpf);
+    printf("Digite sua senha: ");
+    scanf("%s", senha);
 
-  if (opcao == 1) {
-    cadastrarUsuario();
-  } else if (opcao == 2) {
-    printf("\n");
-    printf("Insira o CPF: ");
-    scanf("%11s", cpf);
+    float saldoReais = 0.0;
+    CriptoSaldo criptoSaldo = {0};
 
-    printf("Insira a senha: ");
-    scanf("%19s", senha);
-
+    // Verifica o login
     if (efetuarLogin(cpf, senha, &saldoReais)) {
-      printf("\n");
-      printf("Login realizado com sucesso! Bem-vindo à FEI Crypto Exchange!\n");
-      printf("------------------------------------------------------------------\n");
-
-      printf("Escolha o tipo de acesso: \n");
-      printf("1. Administrador\n");
-      printf("2. Usuário\n");
-      scanf("%d", &tipoacesso);
-
-      if (tipoacesso == 1) {
-
+        int opcao;
         do {
-        menuPrincipal(saldoReais);
-        printf("Escolha uma opção: ");
-        scanf("%d", &opcao);
-        escolhaOpcao(opcao, &saldoReais, &criptoSaldo, cpf, senha);
-
-        } while (opcao !=
-               8);
-      } else if (tipoacesso == 2) {
-      printf("Acesso de Administrador permitido.\n");
-      } else {
-      printf("Opção inválida. Encerrando o programa.\n");
-      }
-    } else { 
-      printf("CPF ou senha incorretos. Tente novamente.\n");
+            menuPrincipal(saldoReais);
+            printf("Escolha uma opção: ");
+            scanf("%d", &opcao);
+            escolhaOpcao(opcao, &saldoReais, &criptoSaldo, cpf, senha);
+        } while (opcao != 8);
+    } else {
+        printf("Login falhou. CPF ou senha inválidos.\n");
     }
-  } else {
-    printf("Opção inválida. Encerrando o programa.\n");
-  }
-
-  return 0;
+    return 0;
 }
