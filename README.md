@@ -51,3 +51,7 @@ O administrador precisa fornecer um CPF válido (11 dígitos) e uma senha de 6 d
 
 5. SAIR
 <li>Para sair do sistema, o administrador pode selecionar a opção "Sair" no menu.</li>
+
+<h2>Criadores</h2>
+<li>Lucas de Almeida Brandão - RA: 22.124.066-6</li>
+<li>João Pedro Martins - RA: 22.124.034-4</li>
