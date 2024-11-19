@@ -174,45 +174,27 @@ void menuadm() {
 }
 
 void cadastroinvestidor() {
-    char nome[maxcpf];
-    char cpf[maxcpf];
-    char senha[maxsenha];
+  char cpf[12];
+  char senha[20];
+  float saldoReais = 0.0;
 
-    printf("Cadastro de novo Investidor: \n");
-    printf("Digite o nome do Investidor: ");
-    if (scanf("%s", nome) != 1) {
-        printf("Erro na leitura do nome.\n");
-        return;
-    }
-    printf("Digite o CPF do Investidor: ");
-    if (scanf("%s", cpf) != 1) {
-        printf("Erro na leitura do CPF.\n");
-        return;
-    }
-    if (strlen(cpf) != 11) {
-        printf("CPF inválido. \n");
-        return;
-    }
+  printf("Digite o CPF para cadastro (somente números): ");
+  scanf("%11s", cpf);
+  printf("Digite a senha para cadastro: ");
+  scanf("%19s", senha);
 
-    printf("Digite uma senha de 6 dígitos: ");
-    if (scanf("%s", senha) != 1) {
-        printf("Erro na leitura da senha.\n");
-        return;
-    }
-    if (strlen(senha) != 6) {
-        printf("Senha inválida. Deve conter 6 dígitos.\n");
-        return;
-    }
 
-    FILE *file = fopen(usuariofile, "a");
-    if (file == NULL) {
-        printf("Erro ao abrir o arquivo de investidores.\n");
-        return;
-    }
-    fprintf(file, "%s %s %s\n", nome, cpf, senha);
-    fclose(file);
+  FILE *file = fopen(usuariofile, "a");
+  if (file == NULL) {
+    printf("Erro ao abrir o arquivo de cadastro.\n");
+    return;
+  }
 
-    printf("Investidor cadastrado com sucesso!\n");
+  //salvando o cpf, senha e saldo
+  fprintf(file, "CPF:%s Senha:%s Saldo:%.2f\n", cpf, senha, saldoReais);
+
+  fclose(file);
+  printf("Cadastro realizado com sucesso!\n");
 }
 
 void cadastromoeda() {
@@ -259,15 +241,14 @@ void cadastromoeda() {
 
 
 void excluirinvestidor() {
-    char nome[maxcpf];
-    char cpf[maxcpf];
-    char nomeremover[maxcpf];
+    char cpfremover[maxcpf];
+    char linha[100]; // Para armazenar uma linha do arquivo
     int encontrado = 0;
 
     printf("Excluir Investidor: \n");
-    printf("Digite o nome do investidor que deseja excluir: ");
-    if (scanf("%s", nomeremover) != 1) {
-        printf("Erro na leitura do nome.\n");
+    printf("Digite o CPF do investidor que deseja excluir: ");
+    if (scanf("%s", cpfremover) != 1) {
+        printf("Erro na leitura do CPF.\n");
         return;
     }
 
@@ -275,20 +256,28 @@ void excluirinvestidor() {
     FILE *temp = fopen("temp.txt", "w");
 
     if (file == NULL || temp == NULL) {
-        printf("Erro ao abrir arquivo.\n");
+        printf("Erro ao abrir os arquivos.\n");
+        if (file) fclose(file);
+        if (temp) fclose(temp);
         return;
     }
 
-    while (fscanf(file, "%s %s", nome, cpf) != EOF) {
-        if (strcmp(nome, nomeremover) != 0) {
-            fprintf(temp, "%s %s\n", nome, cpf);
+    while (fgets(linha, sizeof(linha), file)) {
+        char cpf[maxcpf];
+        sscanf(linha, "CPF:%11s", cpf); // Extrai o CPF da linha
+
+        // Verifica se o CPF é o que deve ser removido
+        if (strcmp(cpf, cpfremover) != 0) {
+            fputs(linha, temp); // Copia a linha para o arquivo temporário
         } else {
             encontrado = 1;
         }
     }
+
     fclose(file);
     fclose(temp);
 
+    // Substitui o arquivo original pelo temporário
     remove(usuariofile);
     rename("temp.txt", usuariofile);
 
@@ -300,9 +289,10 @@ void excluirinvestidor() {
 }
 
 void excluirmoeda() {
-    char nome[20];
-    char nomeremove[20];
-    float valor;
+    char linha[100];             // Para armazenar a linha lida do arquivo
+    char nomeremove[20];         // Nome da moeda a ser removida
+    char nome[20];               // Nome da moeda atual no arquivo
+    float cotacao, taxa_compra, taxa_venda;
     int encontrado = 0;
 
     printf("Excluir Criptomoeda: \n");
@@ -316,29 +306,39 @@ void excluirmoeda() {
     FILE *temp = fopen("temp.txt", "w");
 
     if (file == NULL || temp == NULL) {
-        printf("Erro ao abrir o arquivo.\n");
+        printf("Erro ao abrir os arquivos.\n");
+        if (file) fclose(file);
+        if (temp) fclose(temp);
         return;
     }
 
-    while (fscanf(file, "%s %f", nome, &valor) != EOF) {
-        if (strcmp(nome, nomeremove) != 0) {
-            fprintf(temp, "%s %.2f\n", nome, valor);
-        } else {
-            encontrado = 1;
+    // Percorre o arquivo linha por linha
+    while (fgets(linha, sizeof(linha), file)) {
+        // Tenta extrair os dados da linha
+        if (sscanf(linha, "%s %f %f %f", nome, &cotacao, &taxa_compra, &taxa_venda) == 4) {
+            // Verifica se o nome é diferente do que será excluído
+            if (strcmp(nome, nomeremove) != 0) {
+                fputs(linha, temp); // Escreve a linha no arquivo temporário
+            } else {
+                encontrado = 1; // Indica que a moeda foi encontrada
+            }
         }
     }
+
     fclose(file);
     fclose(temp);
 
+    // Substitui o arquivo original pelo temporário
     remove(criptofile);
     rename("temp.txt", criptofile);
 
     if (encontrado) {
-        printf("Criptomoeda removida com sucesso!\n");
+        printf("Criptomoeda '%s' removida com sucesso!\n", nomeremove);
     } else {
-        printf("Criptomoeda não encontrada.\n");
+        printf("Criptomoeda '%s' não encontrada.\n", nomeremove);
     }
 }
+
 
 void sair() {
     printf("Encerrando programa.\n");
