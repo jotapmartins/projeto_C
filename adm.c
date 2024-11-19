@@ -159,7 +159,7 @@ void menuadm() {
                 excluirmoeda();
                 break;
             case 5:
-                printf("saldo do investidor");
+                consultarsaldo();
                 break;
             case 6:
                 printf("extrato do investidor");
@@ -338,6 +338,49 @@ void excluirmoeda() {
         printf("Criptomoeda '%s' não encontrada.\n", nomeremove);
     }
 }
+
+void consultarsaldo() {
+    char cpf[maxcpf];
+    char linha[100]; // Para armazenar uma linha do arquivo
+    char cpfbuscado[maxcpf];
+    float saldo;
+    int encontrado = 0;
+
+    printf("Consultar Saldo do Investidor:\n");
+    printf("Digite o CPF do investidor: ");
+    if (scanf("%s", cpf) != 1) {
+        printf("Erro na leitura do CPF.\n");
+        return;
+    }
+
+    FILE *file = fopen(usuariofile, "r");
+    if (file == NULL) {
+        printf("Erro ao abrir o arquivo de usuários.\n");
+        return;
+    }
+
+    // Percorrer o arquivo linha por linha
+    while (fgets(linha, sizeof(linha), file)) {
+        char senha[maxsenha]; // Para ignorar a senha ao ler os dados
+
+        // Tenta extrair os dados da linha
+        if (sscanf(linha, "CPF:%11s Senha:%6s Saldo:%f", cpfbuscado, senha, &saldo) == 3) {
+            // Verifica se o CPF é o buscado
+            if (strcmp(cpf, cpfbuscado) == 0) {
+                printf("CPF: %s\nSaldo disponível: R$%.2f\n", cpfbuscado, saldo);
+                encontrado = 1;
+                break;
+            }
+        }
+    }
+
+    fclose(file);
+
+    if (!encontrado) {
+        printf("Investidor com CPF '%s' não encontrado.\n", cpf);
+    }
+}
+
 
 
 void sair() {
