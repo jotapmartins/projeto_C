@@ -1,33 +1,57 @@
-<h1 id="titulo">Projeto C</h1>
-    </div>
-    <h3>Representantes</h3>
-    <br>João Pedro (22.124.034-4)</br>
-    <br>Lucas Alves (22.124.008-8)</br>
-    <br>Lucas Brandão (22.124.066-6)</br>
-    </div>
-    <h3>Sobre o nosso projeto</h3>
-    <p>Este projeto envolve a criação de uma exchange de criptomoedas em C, permitindo transações com
-    Bitcoin, Ethereum e Ripple. A aplicação permite que usuários façam login, consultem saldos, realizem depósitos,
-    saques, compras e vendas de criptomoedas, além de visualizar o extrato de transações. As taxas variam conforme a
-    moeda e a operação. As cotações das criptomoedas serão atualizadas dinamicamente, com variações de até 5%. O
-    programa armazena dados de até 10 usuários e 100 transações por usuário.</p>
-    <img src="Logo_FEI.jpg" width="120" height="100">
-    <h3>Como funciona o projeto</h3>
-    <h5>1º Passo</h5>
-    <p>Crie uma conta para efetuar o login:</p>
-    <img src="Captura%20de%20tela%202024-10-01%20213559.png" width="300" height="150"
-    <br>
-    <h5>2º Passo</h5>
-    <p>Selecione a opção para usar o cripto exchange:</p>
-    <img src="Captura%20de%20tela%202024-10-01%20213645.png" width="320" height="180"
-    <br>
-    <h3>Moedas</h3>
-    <img src="btc_img.webp" width="105" height="70">
-    <h5>Bitcoin</h5>
-    <img src="xrp_img.png" width="110" height="90">
-    <h5>Ripple</h5>
-    <img src="eth_img.webp" width="100" height="80">
-    <h5>Ethereum</h5>
-    </div>
+<h1>FEI Crypto Exchange</h1>
 
-  </div>
+<h2>Descrição</h2>
+<p>Este é o código de um sistema básico de gerenciamento de criptomoedas e investidores, projetado para ser utilizado por um administrador da FEI Crypto Exchange. O sistema permite a administração de usuários, criptomoedas e transações. O administrador pode cadastrar novos investidores e criptomoedas, excluir registros, consultar saldos e extratos, e atualizar as cotações das criptomoedas.</p>
+
+<h2>Funcionalidades</h2>
+
+1. CADASTRO DE ADMINISTRADOR
+<li>O administrador pode cadastrar seu CPF e uma senha de 6 dígitos, que serão utilizados para realizar o login.</li>
+
+<p></p>
+
+2. LOGIN DE ADMINISTRADOR
+<li>Após o cadastro, o administrador pode fazer login usando seu CPF e senha.</li>
+
+<p></p>
+
+3.MENU DO ADMINISTRADOR
+<li>Cadastrar novo Investidor - Registrar um novo investidor com CPF e senha.</li>
+<li>Cadastrar nova Criptomoeda - Cadastrar uma criptomoeda com nome, cotação inicial, taxa de compra e taxa de venda.</li>
+<li>Excluir Investidor - Remover um investidor do sistema.</li>
+<li>Excluir Criptomoeda - Remover uma criptomoeda do sistema.</li>
+<li>Consultar saldo de um Investidor - Verificar o saldo disponível de um investidor específico.</li>
+<li>Consultar Extrato de um Investidor - Ver todas as transações feitas por um investidor, incluindo tipo, moeda, quantidade, valor e data.</li>
+<li>Atualizar Cotação de Criptomoeda - Atualizar a cotação de uma criptomoeda registrada no sistema.</li>
+<li>Sair - Finaliza o programa.</li>
+
+<h2>Sobre</h2>
+
+<li>Este projeto foi desenvolvido utilizando a linguagem de programação C.</li>
+<li> O sistema utiliza arquivos de texto para armazenar informações sobre administradores, investidores, criptomoedas e transações.</li>
+
+
+<h2>Como Usar</h2>
+
+1. CADASTRO DE ADMINISTRADOR
+<li>Ao iniciar o programa, o administrador pode escolher a opção de cadastrar um novo administrador (opção 1 no menu principal).
+O administrador precisa fornecer um CPF válido (11 dígitos) e uma senha de 6 dígitos.</li>
+
+<p></p>
+
+2. LOGIN DO ADMINISTRADOR
+<li>Após cadastrar o administrador, é possível realizar o login com o CPF e senha cadastrados.</li>
+
+<p></p>
+
+3. REALIZAR OPERAÇÕES
+<li>Após o login, o administrador pode acessar o menu principal e escolher entre as opções,  cadastrar investidores e criptomoedas, excluir investidores e criptomoedas consultar saldos e extratos, e atualizar as cotações das criptomoedas.</li>
+
+<p></p>
+
+5. SAIR
+<li>Para sair do sistema, o administrador pode selecionar a opção "Sair" no menu.</li>
+
+<h2>Criadores</h2>
+<li>Lucas de Almeida Brandão - RA: 22.124.066-6</li>
+<li>João Pedro Martins - RA: 22.124.034-4</li>

@@ -5,7 +5,6 @@
 
 #define usuariofile "USUARIO.txt"
 
-//valor moedas
 float bitcoin_preco = 150000.0;
 float ripple_preco = 5.0;
 float ethereum_preco = 10000.0;
@@ -18,7 +17,6 @@ typedef struct {
   char dataHora[20];   
 } Transacao;
 
-//extrato
 void registrarTransacao(const char *tipo, const char *cripto, float quantidade, float valor) {
     FILE *file = fopen("transacoes.txt", "a");
     if (file == NULL) {
@@ -26,7 +24,6 @@ void registrarTransacao(const char *tipo, const char *cripto, float quantidade, 
         return;
     }
 
-  // data
   time_t agora = time(NULL);
   struct tm *dataAtual = localtime(&agora);
   char data[11]; 
@@ -45,7 +42,6 @@ typedef struct {
   float ethereum;
 } CriptoSaldo;
 
-// atualizar cotação
 float gerarvariacao() {
   return ((rand() % 101) - 50) / 1000.0;
 }
@@ -67,7 +63,6 @@ void atualizarcotacao() {
   printf("--------------------------------------\n");
 }
 
-//taxas
 float aplicartaxacompra(float valorcompra, int cripto) {
   float taxa = 0.0;
   switch (cripto) {
@@ -117,30 +112,25 @@ int contarUsuarios() {
   return contador;
 }
 
-//verificar o login
 int efetuarLogin(char *cpf, char *senha, float *saldo) {
   char cpfCadastrado[12];
   char senhaCadastrada[20];
   char linha[50];
 
-  //lendo
   FILE *file = fopen(usuariofile, "r");
   if (file == NULL) {
     printf("Erro ao abrir o arquivo de login.\n");
     return 0;
   }
 
-  // Lendo um por um
   while (fgets(linha, sizeof(linha), file)) {
     if (sscanf(linha, "CPF:%11s Senha:%19s Saldo:%f", cpfCadastrado,
                senhaCadastrada, saldo) == 3) {
-      // limpando para ler cpf e senha  
       cpfCadastrado[strcspn(cpfCadastrado, "\n")] =
           '\0';
       senhaCadastrada[strcspn(senhaCadastrada, "\n")] =
           '\0';
 
-      //comparação
       if (strcmp(cpf, cpfCadastrado) == 0 &&
           strcmp(senha, senhaCadastrada) == 0) {
         fclose(file);
@@ -165,7 +155,6 @@ void menuPrincipal(float saldoReais) {
   printf("8. Sair\n");
 }
 
-// escolha do usuario
 void escolhaOpcao(int opcao, float *saldoReais, CriptoSaldo *criptoSaldo, const char *cpf,
                   const char *senha) {
   switch (opcao) {
@@ -203,7 +192,6 @@ void escolhaOpcao(int opcao, float *saldoReais, CriptoSaldo *criptoSaldo, const 
       printf("Depósito realizado com sucesso!\n");
         printf("--------------------------------------\n");
 
-      // add no extrato
       registrarTransacao("deposito", "Reais", 0, deposito);
 
       FILE *file = fopen(usuariofile, "r+");
@@ -211,7 +199,6 @@ void escolhaOpcao(int opcao, float *saldoReais, CriptoSaldo *criptoSaldo, const 
         char linha[50];
         long pos;
         while (fgets(linha, sizeof(linha), file)) {
-          // Encontra a linha correspondente
           if (strstr(linha, cpf) != NULL) {
             pos = ftell(file);
             fseek(file, pos - strlen(linha), SEEK_SET);
@@ -236,21 +223,15 @@ void escolhaOpcao(int opcao, float *saldoReais, CriptoSaldo *criptoSaldo, const 
       printf("\n");
       printf("Saque realizado com sucesso!\n");
         printf("----------------------------------\n");
+      registrarTransacao("saque", "Reais", 0, saque);
 
-      //add no extrato
-      registrarTransacao("saque", "Reais", 0, saque);//modificado
-
-      // Atualiza o saldo
       FILE *file = fopen(usuariofile, "r+");
       if (file != NULL) {
         char linha[50];
         long pos;
         while (fgets(linha, sizeof(linha), file)) {
-          // Encontra a linha correspondente ao usuário
           if (strstr(linha, cpf) != NULL) {
-            // Armazena a posição atual do arquivo
             pos = ftell(file);
-            // Retorna ao início da linha para sobrescrever
             fseek(file, pos - strlen(linha), SEEK_SET);
             fprintf(file, "CPF:%s Senha:%s Saldo:%.2f\n", cpf, senha, *saldoReais);
             break;
@@ -288,25 +269,25 @@ void escolhaOpcao(int opcao, float *saldoReais, CriptoSaldo *criptoSaldo, const 
       case 1:
         criptoSaldo->bitcoin += valorcomtaxa / bitcoin_preco;
         printf("Compra de BITCOIN realizada com sucesso! Saldo atual %.6f BTC.\n", criptoSaldo->bitcoin);
-        registrarTransacao("compra", "Bitcoin", valorcomtaxa / bitcoin_preco, valorcompra);//add no extrato
+        registrarTransacao("compra", "Bitcoin", valorcomtaxa / bitcoin_preco, valorcompra);
           printf("------------------------------------------------------------------------------------------\n");
         break;
       case 2:
         criptoSaldo->ripple += valorcomtaxa / ripple_preco;
         printf("Compra de RIPPLE realizada com sucesso! Saldo atual %.6f XPR.\n", criptoSaldo->ripple);
-        registrarTransacao("compra", "Ripple", valorcomtaxa / ripple_preco, valorcompra);//add no extrato
+        registrarTransacao("compra", "Ripple", valorcomtaxa / ripple_preco, valorcompra);
           printf("------------------------------------------------------------------------------------------\n");
         break;
       case 3:
         criptoSaldo->ethereum += valorcomtaxa / ethereum_preco;
         printf("Compra de ETHEREUM realizada com sucesso! Saldo atual %.6f ETH.\n", criptoSaldo->ethereum);
-        registrarTransacao("compra", "Ethereum", valorcomtaxa / ethereum_preco, valorcompra);//add no extrato
+        registrarTransacao("compra", "Ethereum", valorcomtaxa / ethereum_preco, valorcompra);
           printf("------------------------------------------------------------------------------------------\n");
         break;
 
       default:
         printf("Opção inválida.\n");
-        *saldoReais += valorcompra;// opçao invalida dinheiro volta
+        *saldoReais += valorcompra;
         break;
       }
     } else {
@@ -333,11 +314,11 @@ void escolhaOpcao(int opcao, float *saldoReais, CriptoSaldo *criptoSaldo, const 
     case 1:
       if (quantidadevenda <= criptoSaldo->bitcoin) {
         valorvenda = quantidadevenda * bitcoin_preco;
-        valorvenda = aplicartaxavenda(valorvenda, escolhacripto); //aplica taxa
+        valorvenda = aplicartaxavenda(valorvenda, escolhacripto);
         criptoSaldo->bitcoin -= quantidadevenda;
         *saldoReais += valorvenda;
         printf("Venda de BITCOIN realizada com sucesso! Valor recebido: R$ %.2f. Saldo atual: R$ %.2f\n", valorvenda, *saldoReais);
-        registrarTransacao("venda", "Bitcoin", quantidadevenda, valorvenda);//add extrato
+        registrarTransacao("venda", "Bitcoin", quantidadevenda, valorvenda);
             printf("------------------------------------------------------------------------------------------\n");
       } else {
         printf("Quantidade de BITCOIN insuficiente.\n");
@@ -346,11 +327,11 @@ void escolhaOpcao(int opcao, float *saldoReais, CriptoSaldo *criptoSaldo, const 
     case 2:
       if (quantidadevenda <= criptoSaldo->ripple) {
         valorvenda = quantidadevenda * ripple_preco;
-        valorvenda = aplicartaxavenda(valorvenda, escolhacripto); //aplica taxa
+        valorvenda = aplicartaxavenda(valorvenda, escolhacripto);
         criptoSaldo->ripple -= quantidadevenda;
         *saldoReais += valorvenda;
         printf("Venda de RIPPLE realizada com sucesso! Valor recebido: R$ %.2f. Saldo atual: R$ %.2f\n", valorvenda, *saldoReais);
-        registrarTransacao("venda", "Ripple", quantidadevenda, valorvenda);//add extrato
+        registrarTransacao("venda", "Ripple", quantidadevenda, valorvenda);
             printf("------------------------------------------------------------------------------------------\n");
       } else {
         printf("Quantidade de RIPPLE insuficiente.\n");
@@ -359,11 +340,11 @@ void escolhaOpcao(int opcao, float *saldoReais, CriptoSaldo *criptoSaldo, const 
       case 3:
         if (quantidadevenda <= criptoSaldo->ethereum) {
           valorvenda = quantidadevenda * ethereum_preco;
-          valorvenda = aplicartaxavenda(valorvenda, escolhacripto); //aplica taxa
+          valorvenda = aplicartaxavenda(valorvenda, escolhacripto);
           criptoSaldo->ethereum -= quantidadevenda;
           *saldoReais += valorvenda;
           printf("Venda de Ethereum realizada com sucesso! Valor recebido: R$ %.2f. Saldo atual: R$ %.2f\n", valorvenda, *saldoReais);
-          registrarTransacao("venda", "ETHEREUM", quantidadevenda, valorvenda);// add extrato
+          registrarTransacao("venda", "ETHEREUM", quantidadevenda, valorvenda);
             printf("------------------------------------------------------------------------------------------\n");
         } else {
           printf("Quantidade de ETHEREUM insuficiente.\n");
@@ -401,7 +382,6 @@ int main() {
     float saldoReais = 0.0;
     CriptoSaldo criptoSaldo = {0};
 
-    // Verifica o login
     if (efetuarLogin(cpf, senha, &saldoReais)) {
         int opcao;
         do {
