@@ -7,49 +7,95 @@
 #define admfile "adm.txt"
 #define usuariofile "USUARIO.txt"
 #define criptofile "cripto.txt"
+#define extratofile "extrato.txt"
 
-void cadastraradmin();
+void cadastraradm();
 int loginadm();
-
 void menuadm();
 void cadastroinvestidor();
 void cadastromoeda();
 void excluirinvestidor();
 void excluirmoeda();
+void consultarSaldo();
+void consultarExtrato();
+void atualizarcotacao();
 void sair();
+void salvarinvestidor();
+void salvausuario();
+void atualizarinvestidor();
+
+// Funções Implementadas
+void atualizarcotacao() {
+    printf("Atualizando cotação das criptomoedas...\n");
+    // Adicione aqui a lógica de atualização
+}
+
+void consultarExtrato() {
+    printf("Consultando extrato do investidor...\n");
+    // Adicione aqui a lógica de consulta
+}
+
+void consultarSaldo() {
+    printf("Consultando saldo do investidor...\n");
+    // Adicione aqui a lógica de consulta
+}
+
+void excluirmoeda() {
+    printf("Excluindo moeda...\n");
+    // Adicione aqui a lógica de exclusão
+}
+
+void excluirinvestidor() {
+    printf("Excluindo investidor...\n");
+    // Adicione aqui a lógica de exclusão
+}
+
+void cadastromoeda() {
+    printf("Cadastrando nova moeda...\n");
+    // Adicione aqui a lógica de cadastro
+}
+
+void cadastroinvestidor() {
+    printf("Cadastrando novo investidor...\n");
+    // Adicione aqui a lógica de cadastro
+}
 
 int main() {
-  int opcao;
+    int opcao;
 
-  printf("Bem-vindo à área do administrador da FEI Crypto Exchange!\n");
+    printf("Bem-vindo à área do administrador da FEI Crypto Exchange!\n");
 
-  while (1) {
-    printf("\n Menu Inicial \n");
-    printf("1. Cadastrar Administrador\n");
-    printf("2. Login\n");
-    printf("3. Sair\n");
-    printf("Escolha uma opção: ");
-    scanf("%d", &opcao);
+    while (1) {
+        printf("\n Menu Inicial \n");
+        printf("1. Cadastrar Administrador\n");
+        printf("2. Login\n");
+        printf("3. Sair\n");
+        printf("Escolha uma opção: ");
+        if (scanf("%d", &opcao) != 1) {
+            printf("Erro na entrada. Tente novamente.\n");
+            while(getchar() != '\n');  // Limpa o buffer de entrada
+            continue;
+        }
 
-    switch (opcao) {
-      case 1:
-          cadastraradmin();
-          break;
-      case 2:
-          if (loginadm()) {
-             menuadm();  
-          } else {
-              printf("Falha no login. Tente novamente.\n");
-          }
-          break;
-      case 3:
-          printf("Saindo do sistema.\n");
-          exit(0);
-      default:
-          printf("Opção inválida. Tente novamente,\n");
+        switch (opcao) {
+            case 1:
+                cadastraradm();
+                break;
+            case 2:
+                if (loginadm()) {
+                    menuadm();
+                } else {
+                    printf("Falha no login. Tente novamente.\n");
+                }
+                break;
+            case 3:
+                printf("Saindo do sistema.\n");
+                exit(0);
+            default:
+                printf("Opção inválida. Tente novamente.\n");
+        }
     }
-  }
-  return 0;
+    return 0;
 }
 
 void cadastraradm() {
@@ -58,19 +104,26 @@ void cadastraradm() {
 
     printf("Cadastro de Administrador: \n");
     printf("Digite o CPF: \n");
-    scanf("%s", cpf);
+    if (scanf("%s", cpf) != 1) {
+        printf("Erro na leitura do CPF.\n");
+        return;
+    }
+
     if (strlen(cpf) != 11){
-    printf("CPF inválido. \n");
-    return;
+        printf("CPF inválido. \n");
+        return;
     }
 
     printf("Digite uma senha de 6 dígitos: ");
-    scanf("%s", senha);
+    if (scanf("%s", senha) != 1) {
+        printf("Erro na leitura da senha.\n");
+        return;
+    }
+
     if (strlen(senha) != 6) {
         printf("Senha inválida. Deve conter 6 dígitos.\n");
         return;
     }
-    
 
     FILE *file = fopen(admfile, "w");
     if (file == NULL) {
@@ -95,14 +148,26 @@ int loginadm() {
         return 0;
     }
 
-    fscanf(file, "%s %s", savecpf, savesenha);
+    // Verificando o retorno de fscanf para garantir que os dados foram lidos corretamente
+    if (fscanf(file, "%s %s", savecpf, savesenha) != 2) {
+        printf("Erro ao ler os dados do administrador.\n");
+        fclose(file);
+        return 0;
+    }
+
     fclose(file);
 
     printf("Login de Administrador: \n");
     printf("Digite seu CPF: ");
-    scanf("%s", cpf);
+    if (scanf("%s", cpf) != 1) {
+        printf("Erro na leitura do CPF.\n");
+        return 0;
+    }
     printf("Digite sua senha: ");
-    scanf("%s", senha);
+    if (scanf("%s", senha) != 1) {
+        printf("Erro na leitura da senha.\n");
+        return 0;
+    }
 
     if (strcmp(cpf, savecpf) == 0 && strcmp(senha, savesenha) == 0) {
         printf("Login bem-sucedido!\n");
@@ -116,15 +181,22 @@ int loginadm() {
 void menuadm() {
     int opcao;
 
-    do{
+    do {
         printf("\n Menu \n");
         printf("1. Cadastrar novo Investidor\n");
         printf("2. Cadastrar nova Criptomoeda\n");
         printf("3. Excluir Investidor\n");
         printf("4. Excluir Criptomoeda\n");
-        printf("5. Sair\n");
+        printf("5. Consultar Saldo de Investidor\n");
+        printf("6. Consultar Extrato de Investidor\n");
+        printf("7. Atualizar Cotação das Criptomoedas\n");
+        printf("8. Sair\n");
         printf("Escolha uma opção: ");
-        scanf("%d", &opcao);
+        if (scanf("%d", &opcao) != 1) {
+            printf("Erro na leitura da opção.\n");
+            while(getchar() != '\n');
+            continue;
+        }
 
         switch (opcao) {
             case 1:
@@ -140,133 +212,39 @@ void menuadm() {
                 excluirmoeda();
                 break;
             case 5:
+                consultarSaldo();
+                break;
+            case 6:
+                consultarExtrato();
+                break;
+            case 7:
+                atualizarcotacao();
+                break;
+            case 8:
                 sair();
                 break;
             default:
                 printf("Opção inválida. Tente novamente.\n");
         }
-    } while (opcao != 5);
-}
-
-void cadastroinvestidor() {
-    char nome[maxcpf];
-    char cpf[15];
-
-    printf("Cadastro de novo Investidor: \n");
-    printf("Digite o nome do Investidor: ");
-    scanf("%s", nome);
-    printf("Digite o CPF do Investidor: ");
-    scanf("%s", cpf);
-
-    FILE *file = fopen(usuariofile, "a");
-    if (file == NULL) {
-        printf("Erro ao abrir o arquivo de investidores.\n");
-        return;
-    }
-    fprintf(file, "%s %s\n", nome, cpf);
-    fclose(file);
-
-    printf("Investidor cadastrado com sucesso!\n");
-}
-
-void cadastromoeda() {
-    char nome[20];
-    float valor;
-
-    printf("Cadastro de Nova Criptomoeda: \n");
-    printf("Digite o nome da Criptomoeda: ");
-    scanf("%s", nome);
-    printf("Digite o valor da Criptomoeda: ");
-    scanf("%f", &valor);
-
-    FILE *file = fopen(criptofile, "a");
-    if (file == NULL) {
-        printf("Erro ao abrir arquivo de Criptomoedas.\n");
-        return;
-    }
-    fprintf(file, "%s %.2f\n", nome, valor);
-    fclose(file);
-
-    printf("Criptomoeda cadastrada com sucesso!\n");
-}
-
-void excluirinvestidor() {
-    char nome[maxcpf];
-    char cpf[15];
-    char nomeremover[maxcpf];
-    int encontrado = 0;
-
-    printf("Excluir Investidor: \n");
-    printf("Digite o nome do investidor que deseja excluir: ");
-    scanf("%s", nomeremover);
-
-    FILE *file = fopen(usuariofile, "r");
-    FILE *temp = fopen("temp.txt", "w");
-
-    if (file == NULL || temp == NULL) {
-        printf("Erro ao abrir arquivo.\n");
-        return;
-    }
-
-    while (fscanf(file, "%s %s", nome, cpf) != EOF) {
-        if (strcmp(nome, nomeremover) != 0) {
-            fprintf(temp, "%s %s\n", nome, cpf);
-        } else {
-            encontrado = 1;
-        }
-    }
-    fclose(file);
-    fclose(temp);
-
-    remove(usuariofile);
-    rename("temp.txt", usuariofile);
-
-    if (encontrado) {
-        printf("Investidor removido com sucesso!\n");
-    } else {
-        printf("Investidor não encontrado.\n");
-    }
-}
-
-void excluirmoeda() {
-    char nome[20];
-    char nomeremove[20];
-    float valor;
-    int encontrado = 0;
-
-    printf("Excluir Criptomoeda: \n");
-    printf("Digite o nome da Criptomoeda que deseja excluir: ");
-    scanf("%s", nomeremove);
-
-    FILE *file = fopen(criptofile, "r");
-    FILE *temp = fopen("temp.txt", "w");
-
-    if (file == NULL || temp == NULL) {
-        printf("Erro ao abrir o arquivo.\n");
-        return;
-    }
-
-    while (fscanf(file, "%s %f", nome, &valor) != EOF) {
-        if(strcmp(nome, nomeremove) != 0) {
-            fprintf(temp, "%s %.2f\n", nome, valor);
-        } else {
-            encontrado = 1;
-        }
-    }
-    fclose(file);
-    fclose(temp);
-
-    remove(criptofile);
-    rename("temp.txt", criptofile);
-
-    if(encontrado) {
-        printf("Criptomoeda removida com sucesso!\n");
-    } else {
-        printf("Criptomoeda não encontrada.\n");
-    }
+    } while (opcao != 8);
 }
 
 void sair() {
     printf("Encerrando programa.\n");
 }
-// TERMINAR O ADM.C
+
+// Funções de manipulação de dados
+void salvarinvestidor() {
+    printf("Salvando investidor...\n");
+    // Lógica para salvar o investidor
+}
+
+void salvausuario() {
+    printf("Salvando usuário...\n");
+    // Lógica para salvar o usuário
+}
+
+void atualizarinvestidor() {
+    printf("Atualizando investidor...\n");
+    // Lógica para atualizar dados do investidor
+}
