@@ -8,7 +8,7 @@
 #define usuariofile "USUARIO.txt"
 #define criptofile "cripto.txt"
 
-void cadastraradm();  // Corrigido o nome para cadastraradm
+void cadastraradm();
 int loginadm();
 
 void menuadm();
@@ -33,7 +33,7 @@ int main() {
     printf("\n--------------------------------------------------------------\n");
     if (scanf("%d", &opcao) != 1) {
         printf("Erro na leitura da opção.\n");
-        continue;  // Ignorar a opção inválida e continuar
+        continue;
     }
 
     switch (opcao) {
@@ -147,7 +147,7 @@ void menuadm() {
         printf("\n");
         if (scanf("%d", &opcao) != 1) {
             printf("Erro na leitura da opção.\n");
-            continue;  // Ignorar a opção inválida e continuar
+            continue;
         }
 
         switch (opcao) {
@@ -198,7 +198,6 @@ void cadastroinvestidor() {
     return;
   }
 
-  //salvando o cpf, senha e saldo
   fprintf(file, "CPF:%s Senha:%s Saldo:%.2f\n", cpf, senha, saldoReais);
 
   fclose(file);
@@ -240,7 +239,6 @@ void cadastromoeda() {
         return;
     }
 
-    // Armazenando os dados no arquivo
     fprintf(file, "%s %.2f %.2f %.2f\n", nome, cotacao_inicial, taxa_compra, taxa_venda);
     fclose(file);
 
@@ -250,7 +248,7 @@ void cadastromoeda() {
 
 void excluirinvestidor() {
     char cpfremover[maxcpf];
-    char linha[100]; // Para armazenar uma linha do arquivo
+    char linha[100];
     int encontrado = 0;
 
     printf("Excluir Investidor: \n");
@@ -272,11 +270,10 @@ void excluirinvestidor() {
 
     while (fgets(linha, sizeof(linha), file)) {
         char cpf[maxcpf];
-        sscanf(linha, "CPF:%11s", cpf); // Extrai o CPF da linha
+        sscanf(linha, "CPF:%11s", cpf);
 
-        // Verifica se o CPF é o que deve ser removido
         if (strcmp(cpf, cpfremover) != 0) {
-            fputs(linha, temp); // Copia a linha para o arquivo temporário
+            fputs(linha, temp);
         } else {
             encontrado = 1;
         }
@@ -284,8 +281,6 @@ void excluirinvestidor() {
 
     fclose(file);
     fclose(temp);
-
-    // Substitui o arquivo original pelo temporário
     remove(usuariofile);
     rename("temp.txt", usuariofile);
 
@@ -297,9 +292,9 @@ void excluirinvestidor() {
 }
 
 void excluirmoeda() {
-    char linha[100];             // Para armazenar a linha lida do arquivo
-    char nomeremove[20];         // Nome da moeda a ser removida
-    char nome[20];               // Nome da moeda atual no arquivo
+    char linha[100];
+    char nomeremove[20];
+    char nome[20];
     float cotacao, taxa_compra, taxa_venda;
     int encontrado = 0;
 
@@ -320,23 +315,18 @@ void excluirmoeda() {
         return;
     }
 
-    // Percorre o arquivo linha por linha
     while (fgets(linha, sizeof(linha), file)) {
-        // Tenta extrair os dados da linha
         if (sscanf(linha, "%s %f %f %f", nome, &cotacao, &taxa_compra, &taxa_venda) == 4) {
-            // Verifica se o nome é diferente do que será excluído
             if (strcmp(nome, nomeremove) != 0) {
-                fputs(linha, temp); // Escreve a linha no arquivo temporário
+                fputs(linha, temp);
             } else {
-                encontrado = 1; // Indica que a moeda foi encontrada
+                encontrado = 1;
             }
         }
     }
 
     fclose(file);
     fclose(temp);
-
-    // Substitui o arquivo original pelo temporário
     remove(criptofile);
     rename("temp.txt", criptofile);
 
@@ -349,7 +339,7 @@ void excluirmoeda() {
 
 void consultarsaldo() {
     char cpf[maxcpf];
-    char linha[100]; // Para armazenar uma linha do arquivo
+    char linha[100];
     char cpfbuscado[maxcpf];
     float saldo;
     int encontrado = 0;
@@ -367,13 +357,10 @@ void consultarsaldo() {
         return;
     }
 
-    // Percorrer o arquivo linha por linha
     while (fgets(linha, sizeof(linha), file)) {
-        char senha[maxsenha]; // Para ignorar a senha ao ler os dados
+        char senha[maxsenha];
 
-        // Tenta extrair os dados da linha
         if (sscanf(linha, "CPF:%11s Senha:%6s Saldo:%f", cpfbuscado, senha, &saldo) == 3) {
-            // Verifica se o CPF é o buscado
             if (strcmp(cpf, cpfbuscado) == 0) {
                 printf("CPF: %s\nSaldo disponível: R$%.2f\n", cpfbuscado, saldo);
                 encontrado = 1;
@@ -391,7 +378,7 @@ void consultarsaldo() {
 
 void consultarExtrato() {
     char cpf[maxcpf];
-    char linha[200]; // Buffer para ler as linhas do arquivo
+    char linha[200];
     int encontrado = 0;
 
     printf("Digite o CPF do investidor para consultar o extrato: ");
@@ -408,16 +395,13 @@ void consultarExtrato() {
 
     printf("\nExtrato de Transações para o CPF: %s\n", cpf);
 
-    // Percorrer o arquivo linha por linha
     while (fgets(linha, sizeof(linha), file)) {
         char cpfAtual[maxcpf];
         char tipo[20], moeda[20], data[11];
         float quantidade, valor;
 
-        // Tenta extrair os dados da linha
         if (sscanf(linha, "CPF:%11s / Tipo:%19s / Moeda:%19s / Quantidade:%f / Valor:%f / Data:%10s",
                    cpfAtual, tipo, moeda, &quantidade, &valor, data) == 6) {
-            // Verifica se o CPF é o buscado
             if (strcmp(cpf, cpfAtual) == 0) {
                 printf("Tipo: %s | Moeda: %s | Quantidade: %.2f | Valor: R$%.2f | Data: %s\n",
                        tipo, moeda, quantidade, valor, data);
@@ -434,10 +418,10 @@ void consultarExtrato() {
 }
 
 void atualizarcotacao() {
-    char linha[100];             // Para armazenar a linha lida do arquivo
-    char nomecripto[20];         // Nome da moeda a ser atualizada
-    char nome[20];               // Nome da moeda atual no arquivo
-    float nova_cotacao;          // Nova cotação a ser atualizada
+    char linha[100];
+    char nomecripto[20];
+    char nome[20];
+    float nova_cotacao;
     float cotacao, taxa_compra, taxa_venda;
     int encontrado = 0;
 
@@ -464,24 +448,19 @@ void atualizarcotacao() {
         return;
     }
 
-    // Percorre o arquivo linha por linha
     while (fgets(linha, sizeof(linha), file)) {
-        // Tenta extrair os dados da linha
         if (sscanf(linha, "%s %f %f %f", nome, &cotacao, &taxa_compra, &taxa_venda) == 4) {
-            // Verifica se o nome corresponde ao que deve ser atualizado
             if (strcmp(nome, nomecripto) == 0) {
                 fprintf(temp, "%s %.2f %.2f %.2f\n", nome, nova_cotacao, taxa_compra, taxa_venda);
                 encontrado = 1;
             } else {
-                fputs(linha, temp); // Copia a linha para o arquivo temporário
+                fputs(linha, temp);
             }
         }
     }
 
     fclose(file);
     fclose(temp);
-
-    // Substitui o arquivo original pelo temporário
     remove(criptofile);
     rename("temp.txt", criptofile);
 
