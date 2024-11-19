@@ -1,0 +1,2 @@
+Tipo: deposito / Moeda: Reais / Quantidade: 0.00 / Valor: 300.00 / Data: 19/11/2024
+Tipo: saque / Moeda: Reais / Quantidade: 0.00 / Valor: 100.00 / Data: 19/11/2024
